@@ -8,18 +8,23 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
-
+import org.springframework.test.context.ContextConfiguration;
 import com.mindtree.employeemanagerapp.model.Employee;
 import com.mindtree.employeemanagerapp.repository.EmployeeRepository;
+import com.mindtree.employeemanagerapp.service.EmployeeService;
 
 
+@ContextConfiguration(classes = Employee.class)
 public class EmployeeTest {
 
- @Autowired
+    @Autowired
     private EmployeeRepository employeeRepository;
  
- @Test
-    @Order(1)
+    @Autowired
+    private EmployeeService employeeService;
+    
+    @Test
+    @Order(5)
     @Rollback(value = false)
     public void saveEmployeeTest(){
         Employee employee =new Employee();
@@ -27,26 +32,26 @@ public class EmployeeTest {
         employee.setFirstName("Abc");
         employee.setLastName("abc");
         
-        employeeRepository.save(employee);
-        Assertions.assertThat(employee.getId()).isGreaterThan(0);
+        employeeService.createEmployee(employee);
+        Assertions.assertThat(employee.getId()).isGreaterThanOrEqualTo(0);
     }
 
     @Test
-    @Order(2)
+    @Order(4)
     public void getEmployeeTest(){
-        Employee employee = employeeRepository.findById(1L).get();
+        Employee employee = employeeService.getEmployeeById(1L);
         Assertions.assertThat(employee.getId()).isEqualTo(1L);
     }
 
     @Test
     @Order(3)
     public void getListOfEmployeesTest(){
-        List<Employee> employees = employeeRepository.findAll();
+        List<Employee> employees = employeeService.getAllEmployees();
         Assertions.assertThat(employees.size()).isGreaterThan(0);
     }
 
     @Test
-    @Order(4)
+    @Order(2)
     @Rollback(value = false)
     public void updateEmployeeTest(){
         Employee employee = employeeRepository.findById(1L).get();
@@ -56,7 +61,7 @@ public class EmployeeTest {
     }
 
     @Test
-    @Order(5)
+    @Order(1)
     @Rollback(value = false)
     public void deleteEmployeeTest(){
         Employee employee = employeeRepository.findById(1L).get();
