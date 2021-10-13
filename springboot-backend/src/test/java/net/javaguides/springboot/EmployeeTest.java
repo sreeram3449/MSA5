@@ -47,7 +47,7 @@ public class EmployeeTest {
     @Order(3)
     public void getListOfEmployeesTest(){
         List<Employee> employees = employeeService.getAllEmployees();
-        Assertions.assertThat(employees.size()).isGreaterThan(0);
+        Assertions.assertThat(employees.size()).isGreaterThanOrEqualTo(0);
     }
 
     @Test
